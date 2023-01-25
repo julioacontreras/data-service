@@ -15,10 +15,12 @@ export const createCaseUse = async (settings: unknown): Promise<HTTPReturn> => {
 
   const notification = new NotificationEntity(dataRequest.body)
 
-  NotificationRepository.create<NotificationType>(notification.getData())
+  const response = await NotificationRepository.create<NotificationType>(
+    notification.getData(),
+  )
 
   return {
-    response: {},
+    response,
     code: statusHTTP.OK,
   }
 }

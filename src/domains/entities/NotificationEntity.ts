@@ -15,7 +15,7 @@ export class NotificationEntity {
   }
 
   constructor(notification: NotificationType) {
-    this.notification._id = notification._id
+    this.notification.id = notification.id
     this.notification.title = notification.title
     this.notification.startAt = notification.startAt
     this.notification.action = notification.action

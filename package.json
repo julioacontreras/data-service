@@ -1,5 +1,5 @@
 {
-  "name": "mailing-service",
+  "name": "notification-service",
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -7,7 +7,7 @@
     "build": "webpack",
     "build:dev": "webpack && npm run start",
     "dev": "npx nodemon --config nodemon.json --quiet --exec \"npm run build:dev\"",
-    "lint": "eslint --ignore-path .gitignore ./src --ext .ts",
+    "lint": "eslint ./src --ext .ts",
     "lint:fix": "npm run lint -- --fix",
     "test:unit": "jest",
     "doc": "apidoc -i src -o documentation",
@@ -28,6 +28,7 @@
     "@types/webpack-node-externals": "^2.5.3",
     "@typescript-eslint/eslint-plugin": "^5.15.0",
     "@typescript-eslint/parser": "^5.15.0",
+    "eslint-plugin-hexagonal-architecture": "^1.0.3",
     "jest": "^27.5.1",
     "ts-jest": "^27.1.4",
     "ts-loader": "^9.2.8",
@@ -39,10 +40,12 @@
   "dependencies": {
     "@fastify/cookie": "^6.0.0",
     "@fastify/cors": "^7.0.0",
+    "@types/joi": "^17.2.3",
     "dotenv": "^16.0.1",
     "fastify": "^3.29.0",
     "http-status": "^1.5.2",
     "install": "^0.13.0",
+    "joi": "^17.7.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.13.0",
     "npm": "^9.2.0"

@@ -3,7 +3,7 @@ import { database } from '../mongodb/connector'
 import { logger } from '@/adapters/logger'
 import { NotificationRepositoryInterface } from '@/adapters/database/NotificationRepository'
 
-type ResponseRegister = { id: string }
+type ResponseCreate = { insertedId: string }
 
 export class NotificationRepositoryMongodb
   implements NotificationRepositoryInterface
@@ -20,27 +20,24 @@ export class NotificationRepositoryMongodb
 
   public async create<T>(model: T): Promise<{ id: string }> {
     try {
-      const notificationSaved = (await this.NotificationModel.insertOne(
+      const userSavedResponse = (await this.NotificationModel.insertOne(
         model as Document,
-      )) as unknown as T
-      const userSavedResponse = notificationSaved as unknown as ResponseRegister
-      return { id: userSavedResponse.id }
+      )) as unknown as ResponseCreate
+      return { id: userSavedResponse.insertedId.toString() }
     } catch (err) {
       logger.error(err + '')
       return { id: '' }
     }
   }
 
-  public async update<T>(id: string, model: T): Promise<{ id: string }> {
+  public async update<T>(id: string, model: T): Promise<void> {
     try {
-      const userSaved = (await this.NotificationModel.updateOne(
+      await this.NotificationModel.updateOne(
         { _id: new ObjectId(id) },
         { $set: model },
-      )) as unknown as T
-      const userSavedResponse = userSaved as unknown as ResponseRegister
-      return { id: userSavedResponse.id }
+      )
     } catch (err) {
-      return { id: '' }
+      logger.error(err + '')
     }
   }
 }

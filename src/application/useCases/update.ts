@@ -3,9 +3,18 @@ import { statusHTTP } from '@/adapters/serverHTTP'
 import { NotificationRepository } from '@/adapters/database'
 import { NotificationType } from '@/domains/types/NotificationType'
 import { NotificationEntity } from '@/domains/entities/NotificationEntity'
+import Joi from 'joi'
 
 type NotificationRequest = {
   body: NotificationType
+}
+
+const schema = Joi.object({
+  id: Joi.string().alphanum().required(),
+})
+
+function isValidate(data: NotificationType) {
+  return schema.validate(data)
 }
 
 export const updateCaseUse = async (settings: unknown): Promise<HTTPReturn> => {
@@ -15,11 +24,14 @@ export const updateCaseUse = async (settings: unknown): Promise<HTTPReturn> => {
 
   const notification = new NotificationEntity(dataRequest.body)
   const data = notification.getData()
-  if (!data._id) {
-    throw 'no_id'
+
+  isValidate(data)
+
+  if (!data.id) {
+    throw new Error('no_id')
   }
-  const id = data._id
-  delete data._id
+  const id = data?.id
+  delete data?.id
   NotificationRepository.update<NotificationType>(id, data)
 
   return {
