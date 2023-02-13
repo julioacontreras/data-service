@@ -15,7 +15,9 @@ export class NotificationRepositoryMongodb
   }
 
   public async findById<T>(id: string): Promise<T> {
-    return (await this.NotificationModel.findOne({ id })) as unknown as T
+    return (await this.NotificationModel.findOne({
+      _id: new ObjectId(id),
+    })) as unknown as T
   }
 
   public async create<T>(model: T): Promise<{ id: string }> {
@@ -39,5 +41,17 @@ export class NotificationRepositoryMongodb
     } catch (err) {
       logger.error(err + '')
     }
+  }
+
+  public async findByUserId<T>(userId: string): Promise<T[]> {
+    return (await this.NotificationModel.find({
+      'owner.id': userId,
+    })) as unknown as T[]
+  }
+
+  public async delete(id: string): Promise<void> {
+    await this.NotificationModel.deleteOne({
+      _id: new ObjectId(id),
+    })
   }
 }
