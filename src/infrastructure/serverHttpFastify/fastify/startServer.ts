@@ -5,7 +5,7 @@ import { logger } from '@/adapters/logger'
 
 import { createUseCases } from './createUseCases'
 
-export function startServer (useCases: UseCaseMap): void {
+export async function startServer (useCases: UseCaseMap): Promise<void> {
   const server = fastify()
 
   // -------------------------
@@ -27,7 +27,7 @@ export function startServer (useCases: UseCaseMap): void {
   if (!port) {
     throw 'Dont have port selected in server'
   }
-  server.listen(port, (err, address) => {
+  await server.listen({ port: Number(port) }, (err, address) => {
     if (err) {
       logger.error(err.toString())
       process.exit(1)

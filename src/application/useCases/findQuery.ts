@@ -3,18 +3,24 @@ import { statusHTTP } from '@/adapters/serverHTTP'
 import { Repository } from '@/adapters/database'
 
 type Request = {
+  body: {
+    query?: object,
+    start?: object,
+    limit?: object
+  },
   params: {
-    id: string,
     formularyName: string
   }
 }
 
-export const deleteCaseUse = async (request: Request): Promise<HTTPReturn> => {
+export const findQueryCaseUse = async (
+  request: Request,
+): Promise<HTTPReturn> => {
   const repository = new Repository()
   repository.setModelName(request.params.formularyName)
-  await repository.delete(request.params.id)
+  const data = await repository.find(request.body?.query, request.body?.start, request.body?.limit)
   return {
-    response: {},
+    response: { collection: data },
     code: statusHTTP.OK,
   }
 }

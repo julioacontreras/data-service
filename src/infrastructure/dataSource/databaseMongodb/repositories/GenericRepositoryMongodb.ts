@@ -1,28 +1,27 @@
 import { Collection, ObjectId } from 'mongodb'
 import { database } from '../mongodb/connector'
 import { logger } from '@/adapters/logger'
-import { NotificationRepositoryInterface } from '@/adapters/database/NotificationRepository'
+import { RepositoryInterface } from '@/adapters/database/Repository'
 
 type ResponseCreate = { insertedId: string }
 
-export class NotificationRepositoryMongodb
-  implements NotificationRepositoryInterface
+export class GenericRepositoryMongodb implements RepositoryInterface
 {
-  NotificationModel: Collection
+  Model: Collection | undefined
 
-  constructor() {
-    this.NotificationModel = database.collection('notification')
+  public setModelName(modelName: string) {
+    this.Model = database.collection(modelName)
   }
 
   public async findById<T>(id: string): Promise<T> {
-    return (await this.NotificationModel.findOne({
+    return (await this.Model?.findOne({
       _id: new ObjectId(id),
     })) as unknown as T
   }
 
   public async create<T>(model: T): Promise<{ id: string }> {
     try {
-      const userSavedResponse = (await this.NotificationModel.insertOne(
+      const userSavedResponse = (await this.Model?.insertOne(
         model as Document,
       )) as unknown as ResponseCreate
       return { id: userSavedResponse.insertedId.toString() }
@@ -34,7 +33,7 @@ export class NotificationRepositoryMongodb
 
   public async update<T>(id: string, model: T): Promise<void> {
     try {
-      await this.NotificationModel.updateOne(
+      await this.Model?.updateOne(
         { _id: new ObjectId(id) },
         { $set: model },
       )
@@ -43,14 +42,16 @@ export class NotificationRepositoryMongodb
     }
   }
 
-  public async findByUserId<T>(userId: string): Promise<T[]> {
-    return (await this.NotificationModel.find({
-      'owner.id': userId,
-    })) as unknown as T[]
+  public async find(query: object, start: number, limit: number): Promise<[]> {
+    const array: any = []
+    await this.Model?.find(query).skip(start).limit(limit).forEach(doc => {
+      array.push(doc)
+    })
+    return array 
   }
 
   public async delete(id: string): Promise<void> {
-    await this.NotificationModel.deleteOne({
+    await this.Model?.deleteOne({
       _id: new ObjectId(id),
     })
   }

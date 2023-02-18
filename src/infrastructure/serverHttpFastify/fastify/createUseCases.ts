@@ -1,6 +1,35 @@
 import { FastifyInstance } from 'fastify'
 
-import { UseCaseRoute, UseCaseMap } from '@/adapters/serverHTTP/types'
+import { UseCaseRoute, UseCaseMap, UseCaseFunction } from '@/adapters/serverHTTP/types'
+
+
+function useHandler(useCaseExecute: UseCaseFunction, useCaseName: string) {
+
+  async function handler (request: any, reply: any) {
+    if (!useCaseExecute) {
+      return reply
+        .status(500)
+        .send({ status: `Not exist use case ${useCaseName}` })        
+    } 
+    try {
+      const returnHTTP = await useCaseExecute({ body: request.body, params: request.params })
+      return reply
+        .status(returnHTTP.code)
+        .send(returnHTTP.response)
+    } catch (err:any) {
+      let message = {}
+      if (process.env.NODE_ENV === 'development') {
+        message = { message: err.message }
+      }
+
+      return reply
+        .status(500)
+        .send({ status: 'internal-error', ...message })
+    }
+  }
+
+  return handler
+}
 
 export function createUseCases (useCases: UseCaseMap, server: FastifyInstance) {
   useCases.forEach((value, key) => {
@@ -8,27 +37,12 @@ export function createUseCases (useCases: UseCaseMap, server: FastifyInstance) {
     
     // -------------------------
     //   route <=> use case
-    // -------------------------    
-    server.post(useCaseRoute.route, {}, async (request, reply) => {
-      const useCaseExecute = useCases.get(key)?.useCase
-
-      if (!useCaseExecute) {
-        return reply
-          .status(500)
-          .send({ status: `Not exist use case ${key}` })        
-      } 
-
-      try {
-        const returnHTTP = await useCaseExecute({ body: request.body })
-        return reply
-          .status(returnHTTP.code)
-          .send(returnHTTP.response)
-      } catch (err) {
-        return reply
-          .status(500)
-          .send({ status: 'internal-error' })
-      }
-
+    // -------------------------   
+     
+    server.route({
+      url: useCaseRoute.route,
+      method: useCaseRoute.method, 
+      handler: useHandler(useCaseRoute.useCase, key)
     })
   })
 }

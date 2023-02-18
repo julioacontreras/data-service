@@ -1,9 +1,8 @@
-import { NotificationRepositoryInterface } from './NotificationRepository'
 
-export let NotificationRepository: NotificationRepositoryInterface
+export let Repository: any
 
-export function setRepositoryNotification(
-  newNotificationRepository: NotificationRepositoryInterface,
+export function setRepository(
+  newRepository: any,
 ) {
-  NotificationRepository = newNotificationRepository
+  Repository = newRepository
 }

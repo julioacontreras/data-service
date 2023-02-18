@@ -1,23 +1,19 @@
 import { HTTPReturn } from '@/adapters/serverHTTP/types'
 import { statusHTTP } from '@/adapters/serverHTTP'
-import { NotificationRepository } from '@/adapters/database'
-import { NotificationType } from '@/domains/types/NotificationType'
-import { NotificationEntity } from '@/domains/entities/NotificationEntity'
+import { Repository } from '@/adapters/database'
 
-type NotificationRequest = {
-  body: NotificationType
+type Request = {
+  body: unknown,
+  params: {
+    id: string,
+    formularyName: string
+  }
 }
 
-export const createCaseUse = async (settings: unknown): Promise<HTTPReturn> => {
-  const dataRequest = settings as NotificationRequest
-
-  // TODO: validate request data
-
-  const notification = new NotificationEntity(dataRequest.body)
-
-  const response = await NotificationRepository.create<NotificationType>(
-    notification.getData(),
-  )
+export const createCaseUse = async (request: Request): Promise<HTTPReturn> => {
+  const repository = new Repository()
+  repository.setModelName(request.params.formularyName)
+  const response = await repository.create(request.body)
 
   return {
     response,
