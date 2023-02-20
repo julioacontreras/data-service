@@ -18,9 +18,9 @@ export const findQueryCaseUse = async (
 ): Promise<HTTPReturn> => {
   const repository = new Repository()
   repository.setModelName(request.params.formularyName)
-  const data = await repository.find(request.body?.query, request.body?.start, request.body?.limit)
+  const response = await repository.find(request.body?.query, request.body?.start, request.body?.limit)
   return {
-    response: { collection: data },
+    response,
     code: statusHTTP.OK,
   }
 }

@@ -42,12 +42,18 @@ export class GenericRepositoryMongodb implements RepositoryInterface
     }
   }
 
-  public async find(query: object, start: number, limit: number): Promise<[]> {
+  public async find(query: object, start: number, limit: number): Promise<unknown> {
     const array: any = []
+    const total = await this.Model?.countDocuments(query)
     await this.Model?.find(query).skip(start).limit(limit).forEach(doc => {
       array.push(doc)
     })
-    return array 
+    return {
+      total,
+      start,
+      limit,
+      collection: array,
+    } 
   }
 
   public async delete(id: string): Promise<void> {

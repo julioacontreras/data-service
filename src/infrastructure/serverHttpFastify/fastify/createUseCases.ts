@@ -4,7 +4,6 @@ import { UseCaseRoute, UseCaseMap, UseCaseFunction } from '@/adapters/serverHTTP
 
 
 function useHandler(useCaseExecute: UseCaseFunction, useCaseName: string) {
-
   async function handler (request: any, reply: any) {
     if (!useCaseExecute) {
       return reply
@@ -12,7 +11,11 @@ function useHandler(useCaseExecute: UseCaseFunction, useCaseName: string) {
         .send({ status: `Not exist use case ${useCaseName}` })        
     } 
     try {
-      const returnHTTP = await useCaseExecute({ body: request.body, params: request.params })
+      const returnHTTP = await useCaseExecute({ 
+        body: request.body,
+        params: request.params,
+        query: request.query 
+      })
       return reply
         .status(returnHTTP.code)
         .send(returnHTTP.response)
@@ -21,13 +24,11 @@ function useHandler(useCaseExecute: UseCaseFunction, useCaseName: string) {
       if (process.env.NODE_ENV === 'development') {
         message = { message: err.message }
       }
-
       return reply
         .status(500)
         .send({ status: 'internal-error', ...message })
     }
   }
-
   return handler
 }
 
