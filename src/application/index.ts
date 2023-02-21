@@ -28,7 +28,7 @@ export function startApp() {
   serverHTTP.add('find', {
     useCase: findQueryCaseUse,
     route: '/api/formulary/:formularyName/show',
-    method: 'POST'
+    method: 'GET'
   })
 
   serverHTTP.add('delete', {

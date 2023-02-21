@@ -3,10 +3,10 @@ import { statusHTTP } from '@/adapters/serverHTTP'
 import { Repository } from '@/adapters/database'
 
 type Request = {
-  body: {
-    query?: object,
-    start?: object,
-    limit?: object
+  query: {
+    query?: string,
+    start?: string,
+    limit?: string
   },
   params: {
     formularyName: string
@@ -16,9 +16,12 @@ type Request = {
 export const findQueryCaseUse = async (
   request: Request,
 ): Promise<HTTPReturn> => {
+  const start = Number(request.query.start)
+  const limit = Number(request.query.limit)
+  const query = JSON.parse(request?.query?.query || '{}') 
   const repository = new Repository()
   repository.setModelName(request.params.formularyName)
-  const response = await repository.find(request.body?.query, request.body?.start, request.body?.limit)
+  const response = await repository.find(query, start, limit)
   return {
     response,
     code: statusHTTP.OK,
