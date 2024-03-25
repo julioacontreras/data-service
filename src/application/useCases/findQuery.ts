@@ -9,7 +9,7 @@ type Request = {
     limit?: string
   },
   params: {
-    formularyName: string
+    name: string
   }
 }
 
@@ -20,7 +20,7 @@ export const findQueryCaseUse = async (
   const limit = Number(request.query.limit)
   const query = JSON.parse(request?.query?.query || '{}') 
   const repository = new Repository()
-  repository.setModelName(request.params.formularyName)
+  repository.setModelName(request.params.name)
   const response = await repository.find(query, start, limit)
   return {
     response,

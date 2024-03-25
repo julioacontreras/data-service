@@ -2,11 +2,12 @@ version: '3.1'
 services:
   database-notification:
     image: mongo
-    container_name: 'auth-database'
+    container_name: 'data-service-mongodb'
     restart: always
     environment:
-      MONGO_INITDB_DATABASE: vip-notification
+      MONGO_INITDB_DATABASE: formulary
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: admin
+      MONGO_INITDB_PORT: 27019
     ports:
-      - '27017-27019:27017-27019'
+      - 27019:27019

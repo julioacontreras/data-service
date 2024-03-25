@@ -6,13 +6,13 @@ type Request = {
   body: unknown,
   params: {
     id: string,
-    formularyName: string
+    name: string
   }
 }
 
 export const createCaseUse = async (request: Request): Promise<HTTPReturn> => {
   const repository = new Repository()
-  repository.setModelName(request.params.formularyName)
+  repository.setModelName(request.params.name)
   const response = await repository.create(request.body)
 
   return {
